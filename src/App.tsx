@@ -4,6 +4,7 @@ import "./App.css";
 function App() {
   const [input, setInput] = React.useState("");
   const [voices, setVoices] = React.useState<SpeechSynthesisVoice[]>([]);
+  const [selectedVoice, setSelectedVoice] = React.useState<number>(0);
 
   React.useEffect(() => {
     // Loading time for website to load the voices
@@ -16,8 +17,9 @@ function App() {
   }, []);
 
   const onClick = () => {
-    const utterThis = new SpeechSynthesisUtterance(input);
-    window.speechSynthesis.speak(utterThis);
+    const utter = new SpeechSynthesisUtterance(input);
+    utter.voice = voices[selectedVoice];
+    window.speechSynthesis.speak(utter);
   };
 
   return (
@@ -28,7 +30,10 @@ function App() {
           onChange={(e) => setInput(e.target.value)}
         ></textarea>
         <div>
-          <select className="voiceOptions">
+          <select
+            className="voiceOptions"
+            onChange={(e) => setSelectedVoice(e.target.selectedIndex)}
+          >
             {voices.map((v, idx) => (
               <option key={idx} value={idx}>
                 {v.name}
