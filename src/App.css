@@ -56,3 +56,13 @@
   padding: 10px 0;
   margin-right: 50px;
 }
+
+.output {
+  margin-top: 20px;
+  width: 1000px;
+}
+
+.highlightme {
+  background-color: #ffff00;
+  color: black;
+}
