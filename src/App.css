@@ -50,3 +50,9 @@
   border-radius: 10px;
   background-color: rgb(68, 200, 156);
 }
+
+.voiceOptions {
+  font-size: 1.5rem;
+  padding: 10px 0;
+  margin-right: 50px;
+}
