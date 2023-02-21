@@ -6,6 +6,8 @@ function App() {
   const [voices, setVoices] = React.useState<SpeechSynthesisVoice[]>([]);
   const [selectedVoice, setSelectedVoice] = React.useState<number>(0);
   const [isSpeaking, setIsSpeaking] = React.useState<boolean>(false);
+  const [thisUtter, setThisUtter] =
+    React.useState<SpeechSynthesisUtterance | null>(null);
   const [highlightedWordIndex, setHighlightedWordIndex] =
     React.useState<number>(-1);
 
@@ -20,23 +22,48 @@ function App() {
   }, []);
 
   const onClick = () => {
+    if (!isSpeaking) {
+      play();
+    } else {
+      pause();
+    }
+  };
+
+  const play = () => {
+    if (thisUtter) {
+      window.speechSynthesis.resume();
+      setIsSpeaking(true);
+      return;
+    }
+
     setIsSpeaking(true);
     const utter = new SpeechSynthesisUtterance(input);
     utter.voice = voices[selectedVoice];
     utter.rate = 0.8;
+    setThisUtter(utter);
 
     let idx = 0;
     setHighlightedWordIndex(idx);
     utter.addEventListener("boundary", () => {
-      setHighlightedWordIndex(idx);
       idx += 1;
+      setHighlightedWordIndex(idx);
     });
 
     utter.addEventListener("end", () => {
-      setTimeout(() => setIsSpeaking(false), 500);
+      setTimeout(() => {
+        setIsSpeaking(false);
+        setThisUtter(null);
+      }, 500);
     });
 
     window.speechSynthesis.speak(utter);
+  };
+
+  const pause = () => {
+    if (thisUtter) {
+      setIsSpeaking(false);
+      window.speechSynthesis.pause();
+    }
   };
 
   return (
@@ -62,7 +89,7 @@ function App() {
           </button>
         </div>
         <div className="output">
-          {isSpeaking &&
+          {(isSpeaking || thisUtter) &&
             input.split(" ").map((word, idx) => (
               <React.Fragment key={idx}>
                 <span
