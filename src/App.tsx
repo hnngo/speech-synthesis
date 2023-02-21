@@ -23,11 +23,19 @@ function App() {
     setIsSpeaking(true);
     const utter = new SpeechSynthesisUtterance(input);
     utter.voice = voices[selectedVoice];
+    utter.rate = 0.8;
+
     let idx = 0;
+    setHighlightedWordIndex(idx);
     utter.addEventListener("boundary", () => {
       setHighlightedWordIndex(idx);
       idx += 1;
     });
+
+    utter.addEventListener("end", () => {
+      setTimeout(() => setIsSpeaking(false), 500);
+    });
+
     window.speechSynthesis.speak(utter);
   };
 
@@ -50,7 +58,7 @@ function App() {
             ))}
           </select>
           <button className="button" onClick={onClick}>
-            Speak
+            {isSpeaking ? "Pause" : "Play"}
           </button>
         </div>
         <div className="output">
