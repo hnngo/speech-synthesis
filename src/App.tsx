@@ -22,6 +22,12 @@ function App() {
   }, []);
 
   const onClick = () => {
+    if (!input) {
+      window.speechSynthesis.cancel();
+      setIsSpeaking(false);
+      return;
+    }
+
     if (!isSpeaking) {
       play();
     } else {
